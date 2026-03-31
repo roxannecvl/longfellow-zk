@@ -14,6 +14,16 @@
 
 add_compile_definitions(OPENSSL_SUPPRESS_DEPRECATED=1)
 include(GoogleTest)
+
+# On macOS it's common to have both Conda and Homebrew installed.
+# If benchmark headers and library come from different prefixes, linking fails
+# due to API/ABI mismatches. Prefer Homebrew's CMake package when available.
+if (CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
+    if (EXISTS "/opt/homebrew/lib/cmake/benchmark/benchmarkConfig.cmake")
+        set(benchmark_DIR "/opt/homebrew/lib/cmake/benchmark" CACHE PATH "" FORCE)
+    endif()
+endif()
+
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
 

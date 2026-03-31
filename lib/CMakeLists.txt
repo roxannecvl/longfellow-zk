@@ -19,7 +19,9 @@ include(CMake/proofs.cmake)
 enable_testing()
 if (CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
   link_directories("/opt/homebrew/lib")
-  include_directories("/opt/homebrew/include")
+    # Homebrew headers should never override dependency-provided headers (e.g. conda).
+    # Keep them late in the include search order to avoid ABI mismatches.
+    include_directories(AFTER SYSTEM "/opt/homebrew/include")
 endif()
 
 # add compiler flags for all known ISA's
@@ -50,35 +52,13 @@ endif()
 
 include_directories(${proofs_SOURCE_DIR})
 
-# main system used in production
+# Minimal build graph for circuits/ecdsa targets.
+# Most other directories in this repo are header-only (or tests-only) and do not
+# need to be added as CMake subdirectories to build the ECDSA targets.
 add_subdirectory(testing)
 add_subdirectory(util)
 add_subdirectory(algebra)
-add_subdirectory(arrays)
-add_subdirectory(merkle)
-add_subdirectory(ligero)
-add_subdirectory(proto)
-add_subdirectory(random)
-add_subdirectory(sumcheck)
-add_subdirectory(gf2k)
-add_subdirectory(cbor)
 add_subdirectory(ec)
-add_subdirectory(zk)
-add_subdirectory(circuits/cbor_parser)
-add_subdirectory(circuits/compiler)
-add_subdirectory(circuits/ecdsa)
-add_subdirectory(circuits/logic)
-add_subdirectory(circuits/mac)
-add_subdirectory(circuits/mdoc)
 add_subdirectory(circuits/sha)
-
-# experiments and tests, not used in production, may be buggy
-add_subdirectory(circuits/tests/anoncred)
-add_subdirectory(circuits/tests/sha3)
-add_subdirectory(circuits/tests/base64)
-add_subdirectory(circuits/tests/jwt)
-add_subdirectory(circuits/tests/ripemd)
-
-# experimental mdoc stuff, not used in production
-add_subdirectory(circuits/tests/mdoc)
+add_subdirectory(circuits/ecdsa)
 

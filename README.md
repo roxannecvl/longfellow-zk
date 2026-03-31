@@ -13,6 +13,13 @@ The Longfellow library enables the construction of  zero-knowledge protocols con
 
 It is named after the bridge outside the Google Cambridge office.
 
+## Minimal checkout note
+
+This workspace has been intentionally minimized to keep only the code and docs
+needed to build and run the ECDSA + SHA256 circuits (including the
+`verify_with_pk_commitment` test/CLI flow). It is not a full copy of the
+upstream Longfellow repository.
+
 # Security Reviews
 
 This project is currently undergoing two independent security reviews by panels of academic and industry experts in the field. Their reports are available in the [Project documentation/Reviews](https://google.github.io/longfellow-zk/docs/reviews/) page.
@@ -22,7 +29,8 @@ This repository contains [the working files](https://github.com/google/longfello
 If you are interested in contributing, please create an Issue or a Pull Request. Our discussions occur under Issues.
 
 # Testing via devcontainer
-You can quickly test our library by using the associated devcontainer to create its environment. Simply click on `Code`-->`Codespaces`-->`Create codespace on master` above to get started.  This creates a docker container on a Github server that includes all of the dependencies and provides a web-based VScode interface to our current codebase.  You can compile and run our benchmarks in this environment, but some of them may be slower than our reported values due to the VM.
+The upstream Longfellow repository supports testing via a devcontainer/Codespaces.
+This minimal checkout does not include that devcontainer configuration.
 
 # Instructions to build
 
@@ -56,13 +64,14 @@ $ brew install googletest google-benchmark zstd
 First run the cmake initialization step
 
 ```
-$ CXX=clang++ cmake -D CMAKE_BUILD_TYPE=Release -S lib -B clang-build-release --install-prefix ${PWD}/install
+$ cmake -S lib -B build-min -DCMAKE_BUILD_TYPE=Release
 ```
 
 Next:
 
 ```
-$ cd clang-build-release && make -j 16 && ctest -j 16
+$ cmake --build build-min -j 8
+$ cd build-min && ctest
 ```
 
 # Running benchmarks
@@ -71,6 +80,7 @@ We have defined several unit, sumcheck, and zk benchmarks. Here are some of
 them:
 
 ```
+$ cd build-min
 $ ./algebra/fft_test --benchmark_filter='BM_*'
 $ ./circuits/sha/flatsha256_circuit_test --benchmark_filter=BM_ShaZK_fp2_128
 ```

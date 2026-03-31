@@ -290,9 +290,6 @@ TEST(ECDSA, ProverVerifier_PrivatePkWithCommitment) {
     ZkProof<Field> zkpr(*circuit, /*logv=*/4, /*lambda=*/128);
     {
       Transcript tp((uint8_t*)"testing", 7);
-      // Note: we intentionally create a fresh prover per proof.
-      // Reusing a ZkProver across multiple proofs can retain internal pad
-      // state (via witness_ growth) and lead to invalid proofs.
       ZkProver<Field, RSFactory> prover(*circuit, p256_base, rsf);
       const auto start = std::chrono::steady_clock::now();
       prover.commit(zkpr, W, tp, rng);

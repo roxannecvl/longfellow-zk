@@ -15,5 +15,11 @@
 proofs_add_tests(verify_test)
 target_link_libraries(verify_test ec util)
 
+proofs_add_tests(verify_with_pk_commitment_test)
+target_link_libraries(verify_with_pk_commitment_test flatsha)
+
 proofs_add_tests(verify_external_test)
-target_link_libraries(verify_external_test ec util crypto)
+target_link_libraries(verify_external_test crypto)
+
+add_executable(verify_with_pk_commitment_cli verify_with_pk_commitment_cli.cc)
+target_link_libraries(verify_with_pk_commitment_cli ec util flatsha algebra)
